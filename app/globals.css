@@ -1,0 +1,269 @@
+@import "tailwindcss";
+
+/* ─── DESIGN TOKENS ──────────────────────────────────────────────────────────── */
+:root {
+  /* Fond & surfaces */
+  --c-bg:           #050914;
+  --c-card:         #0d1424;
+  --c-surface:      #111827;
+  --c-surface-2:    #1a2236;
+  --c-border:       rgba(255,255,255,0.07);
+  --c-border-hover: rgba(255,255,255,0.15);
+
+  /* Textes */
+  --c-text-1: #f1f5f9;
+  --c-text-2: #94a3b8;
+  --c-text-3: #64748b;
+  --c-text-4: #334155;
+
+  /* Accents modules */
+  --c-cyan:    #00d4ff;
+  --c-green:   #00ff87;
+  --c-violet:  #a855f7;
+  --c-blue:    #60a5fa;
+  --c-red:     #f87171;
+  --c-emerald: #4ade80;
+  --c-yellow:  #facc15;
+  --c-orange:  #f97316;
+
+  /* Par module */
+  --c-outils:      #a855f7;
+  --c-llm:         #60a5fa;
+  --c-visual:      #f87171;
+  --c-automation:  #4ade80;
+  --c-skills:      #facc15;
+  --c-resources:   #00ff87;
+  --c-ia-manager:  #f97316;
+  --c-brand:       #00d4ff;
+
+  /* Glassmorphism */
+  --glass-bg:     rgba(13, 20, 36, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-blur:   blur(20px);
+
+  /* Footer */
+  --c-footer-border: rgba(255,255,255,0.06);
+
+  /* Misc */
+  --radius-card: 16px;
+  --radius-btn:  10px;
+}
+
+/* ─── BASE ────────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--c-bg);
+  color: var(--c-text-1);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+/* ─── ANIMATIONS KEYFRAMES ───────────────────────────────────────────────────── */
+
+/* Hero entrance */
+@keyframes heroIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Reveal on scroll */
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes revealLeft {
+  from { opacity: 0; transform: translateX(-32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes revealRight {
+  from { opacity: 0; transform: translateX(32px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Sparkle */
+@keyframes sparkle-pop {
+  0%   { opacity: 0; transform: scale(0) rotate(0deg); }
+  40%  { opacity: 1; transform: scale(1.2) rotate(20deg); }
+  100% { opacity: 0; transform: scale(0.6) rotate(40deg) translateY(-20px); }
+}
+
+/* Cursor blink */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* Orb pulse (AI pages) */
+@keyframes orb-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.08); opacity: 0.8; }
+}
+
+/* Float agents (IA Manager) */
+@keyframes lm-float-a {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  33%       { transform: translateY(-12px) translateX(6px); }
+  66%       { transform: translateY(6px) translateX(-8px); }
+}
+@keyframes lm-float-b {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  33%       { transform: translateY(10px) translateX(-6px); }
+  66%       { transform: translateY(-8px) translateX(10px); }
+}
+@keyframes lm-float-c {
+  0%, 100% { transform: translateY(0) translateX(0); }
+  50%       { transform: translateY(-10px) translateX(4px); }
+}
+
+/* Marquee (scrollers) */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+
+/* Card flip */
+@keyframes flip-in {
+  from { transform: rotateY(-90deg); opacity: 0; }
+  to   { transform: rotateY(0deg);   opacity: 1; }
+}
+
+/* Count up shimmer */
+@keyframes shimmer {
+  from { background-position: -200% center; }
+  to   { background-position: 200% center; }
+}
+
+/* Glow pulse */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 20px rgba(0,212,255,0.1); }
+  50%       { box-shadow: 0 0 40px rgba(0,212,255,0.25); }
+}
+
+/* Spin slow */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── REVEAL CLASSES ────────────────────────────────────────────────────────── */
+.reveal, .reveal-left, .reveal-right {
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal       { transform: translateY(28px); }
+.reveal-left  { transform: translateX(-28px); }
+.reveal-right { transform: translateX(28px); }
+
+.reveal.visible,
+.reveal-left.visible,
+.reveal-right.visible {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ─── GLASSMORPHISM CARD ────────────────────────────────────────────────────── */
+.glass-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
+  border-radius: var(--radius-card);
+}
+
+/* ─── GRADIENT TEXT ─────────────────────────────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--c-cyan), var(--c-green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-violet {
+  background: linear-gradient(135deg, var(--c-violet), var(--c-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── SCROLLERS ─────────────────────────────────────────────────────────────── */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+.marquee-track-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 35s linear infinite;
+}
+
+/* ─── NEON BORDERS ──────────────────────────────────────────────────────────── */
+.neon-cyan  { box-shadow: 0 0 0 1px rgba(0,212,255,0.3), 0 0 20px rgba(0,212,255,0.08); }
+.neon-violet { box-shadow: 0 0 0 1px rgba(168,85,247,0.3), 0 0 20px rgba(168,85,247,0.08); }
+.neon-green { box-shadow: 0 0 0 1px rgba(74,222,128,0.3), 0 0 20px rgba(74,222,128,0.08); }
+
+/* ─── CARD FLIP ─────────────────────────────────────────────────────────────── */
+.card-flip-container { perspective: 1000px; }
+.card-flip-inner {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+  position: relative;
+}
+.card-flip-container.flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+.card-face, .card-flip-front, .card-flip-back {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.card-flip-front {
+  width: 100%;
+  height: 100%;
+}
+.card-back, .card-flip-back {
+  transform: rotateY(180deg);
+  position: absolute;
+  inset: 0;
+}
+
+/* ─── BACKDROP MODAL ────────────────────────────────────────────────────────── */
+.modal-backdrop {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: rgba(5, 9, 20, 0.75);
+}
+
+/* ─── LOCK OVERLAY ──────────────────────────────────────────────────────────── */
+.lock-blur {
+  filter: blur(4px);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ─── SCORE BADGE ───────────────────────────────────────────────────────────── */
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}

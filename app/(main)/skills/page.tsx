@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
 import DatabaseShell from '@/components/catalog/DatabaseShell'
-import LockOverlay from '@/components/shared/LockOverlay'
 import ScoreBadge from '@/components/shared/ScoreBadge'
 import Badge from '@/components/shared/Badge'
 import LikeSaveButtons from '@/components/shared/LikeSaveButtons'
@@ -158,7 +156,7 @@ function CardBack(item: CatalogItem) {
   )
 }
 
-function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: () => void; hasAccess: boolean }) {
+function ModalContent({ item, close }: { item: CatalogItem; close: () => void }) {
   const raw = item as unknown as Record<string, unknown>
   const name = String(raw['name'] || '')
   const descLong = String(raw['desc_long'] || raw['desc_short'] || '')
@@ -179,7 +177,6 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
   const typeColor = typeColors[skillType] || COLOR
 
   const handleAction = () => {
-    if (!hasAccess) return
     if (actionType === 'copy' && content) {
       navigator.clipboard.writeText(content)
       setCopied(true)
@@ -190,7 +187,6 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
   }
 
   const downloadMd = () => {
-    if (!hasAccess) return
     const mdContent = `# ${name}\n\n${descLong}\n\n## Contenu\n\n${content || 'Voir le lien source.'}\n\n## Compatibilité\n${compatibleWith.join(', ')}\n\n## Cas d'usage\n${useCases.map(u => `- ${u}`).join('\n')}`
     const blob = new Blob([mdContent], { type: 'text/markdown' })
     const url = URL.createObjectURL(blob)
@@ -247,15 +243,9 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
           <div className="flex items-center justify-between px-4 py-2.5"
             style={{ background: `${COLOR}08`, borderBottom: `1px solid ${COLOR}15` }}>
             <span className="text-xs font-bold" style={{ color: COLOR }}>Contenu</span>
-            {!hasAccess && (
-              <span className="text-[9px] px-2 py-0.5 rounded font-bold"
-                style={{ background: 'rgba(0,212,255,0.1)', color: '#00d4ff', border: '1px solid rgba(0,212,255,0.2)' }}>
-                🔒 Full Access requis
-              </span>
-            )}
           </div>
           <pre className="text-[10px] leading-relaxed whitespace-pre-wrap p-4 font-mono"
-            style={{ color: hasAccess ? 'var(--c-text-1)' : 'var(--c-text-4)', filter: hasAccess ? 'none' : 'blur(5px)', userSelect: hasAccess ? 'auto' : 'none', maxHeight: 200, overflow: 'auto', background: 'rgba(0,0,0,0.2)' }}>
+            style={{ color: 'var(--c-text-1)', maxHeight: 200, overflow: 'auto', background: 'rgba(0,0,0,0.2)' }}>
             {content}
           </pre>
         </div>
@@ -270,12 +260,12 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
       <div className="flex gap-2 flex-wrap">
         <button onClick={handleAction}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 min-w-[100px]"
-          style={{ background: hasAccess ? `linear-gradient(135deg, ${COLOR}, ${COLOR}bb)` : 'rgba(255,255,255,0.05)', color: hasAccess ? '#030712' : 'var(--c-text-3)' }}>
-          {copied ? '✓ Copié !' : (hasAccess ? (actionType === 'copy' ? '📋 Copier le contenu' : '🔗 Accéder') : '🔒 Accès requis')}
+          style={{ background: `linear-gradient(135deg, ${COLOR}, ${COLOR}bb)`, color: '#030712' }}>
+          {copied ? '✓ Copié !' : (actionType === 'copy' ? '📋 Copier le contenu' : '🔗 Accéder')}
         </button>
         <button onClick={downloadMd}
           className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
-          style={{ background: hasAccess ? `rgba(250,204,21,0.12)` : 'rgba(255,255,255,0.04)', color: hasAccess ? COLOR : 'var(--c-text-3)', border: `1px solid ${hasAccess ? COLOR + '25' : 'rgba(255,255,255,0.08)'}` }}>
+          style={{ background: 'rgba(250,204,21,0.12)', color: COLOR, border: `1px solid ${COLOR}25` }}>
           ⬇ .md
         </button>
         {actionUrl && (
@@ -294,8 +284,6 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
 const MODE_FILTERS = ['Tous', 'Skills', 'Plugins', 'MCPs', 'Extensions', 'Templates']
 
 export default function SkillsPage() {
-  const { hasModule } = useAuth()
-  const hasAccess = hasModule('skills')
   const [modeFilter, setModeFilter] = useState('Tous')
 
   const modeMap: Record<string, string> = {
@@ -308,7 +296,7 @@ export default function SkillsPage() {
       : (SKILLS as unknown as Record<string, unknown>[]).filter(s => s['skill_type'] === modeMap[modeFilter]) as unknown as CatalogItem[]
     : SKILLS as unknown as CatalogItem[]
 
-  const content = (
+  return (
     <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
       <div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
@@ -349,20 +337,14 @@ export default function SkillsPage() {
         filterDefs={FILTERS}
         renderCardFront={CardFront}
         renderCardBack={CardBack}
-        renderModal={(item, close) => <ModalContent item={item} close={close} hasAccess={hasAccess} />}
+        renderModal={(item, close) => <ModalContent item={item} close={close} />}
         moduleColor={COLOR}
         moduleLabel="Skills & Plugins"
         tableColumns={TABLE_COLUMNS}
         kanbanAxis={KANBAN_AXIS}
-        hasAccess={hasAccess}
+        hasAccess={true}
         searchFields={['name', 'desc_short', 'tags', 'category', 'compatible_with', 'use_cases']}
       />
     </div>
   )
-
-  if (!hasAccess) {
-    return <LockOverlay module="skills" label="Débloquer les Skills & Plugins">{content}</LockOverlay>
-  }
-
-  return content
 }

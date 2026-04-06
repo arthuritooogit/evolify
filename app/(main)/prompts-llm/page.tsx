@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
 import DatabaseShell from '@/components/catalog/DatabaseShell'
-import LockOverlay from '@/components/shared/LockOverlay'
 import LikeSaveButtons from '@/components/shared/LikeSaveButtons'
 import ScoreBadge from '@/components/shared/ScoreBadge'
 import Badge from '@/components/shared/Badge'
@@ -152,7 +150,7 @@ function CardBack(item: CatalogItem) {
   )
 }
 
-function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: () => void; hasAccess: boolean }) {
+function ModalContent({ item, close }: { item: CatalogItem; close: () => void }) {
   const raw = item as unknown as Record<string, unknown>
   const name = String(raw['name'] || '')
   const descLong = String(raw['desc_long'] || raw['desc_short'] || '')
@@ -167,7 +165,7 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
   const [copied, setCopied] = useState(false)
 
   const copyPrompt = () => {
-    if (hasAccess && promptText) {
+    if (promptText) {
       navigator.clipboard.writeText(promptText)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -175,9 +173,7 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
   }
 
   const openChatGPT = () => {
-    if (hasAccess) {
-      window.open(`https://chatgpt.com/?q=${encodeURIComponent(promptText.slice(0, 400))}`, '_blank')
-    }
+    window.open(`https://chatgpt.com/?q=${encodeURIComponent(promptText.slice(0, 400))}`, '_blank')
   }
 
   return (
@@ -236,18 +232,10 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
         <div className="flex items-center justify-between px-4 py-2.5"
           style={{ background: `${COLOR}08`, borderBottom: `1px solid ${COLOR}15` }}>
           <span className="text-xs font-bold" style={{ color: COLOR }}>Prompt complet</span>
-          {!hasAccess && (
-            <span className="text-[9px] px-2 py-0.5 rounded font-bold"
-              style={{ background: 'rgba(0,212,255,0.1)', color: '#00d4ff', border: '1px solid rgba(0,212,255,0.2)' }}>
-              🔒 Full Access requis
-            </span>
-          )}
         </div>
         <pre className="text-[11px] leading-relaxed whitespace-pre-wrap p-4"
           style={{
-            color: hasAccess ? 'var(--c-text-1)' : 'var(--c-text-4)',
-            filter: hasAccess ? 'none' : 'blur(5px)',
-            userSelect: hasAccess ? 'auto' : 'none',
+            color: 'var(--c-text-1)',
             maxHeight: 240, overflow: 'auto',
             background: 'rgba(0,0,0,0.2)',
           }}>
@@ -276,8 +264,8 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
       <div className="flex gap-2 flex-wrap">
         <button onClick={copyPrompt}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 min-w-[120px]"
-          style={{ background: hasAccess ? `linear-gradient(135deg, ${COLOR}, ${COLOR}aa)` : 'rgba(255,255,255,0.05)', color: hasAccess ? '#030712' : 'var(--c-text-3)' }}>
-          {copied ? '✓ Copié !' : (hasAccess ? '📋 Copier le prompt' : '🔒 Copier le prompt')}
+          style={{ background: `linear-gradient(135deg, ${COLOR}, ${COLOR}aa)`, color: '#030712' }}>
+          {copied ? '✓ Copié !' : '📋 Copier le prompt'}
         </button>
         <button onClick={openChatGPT}
           className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
@@ -291,10 +279,7 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
 }
 
 export default function PromptsLLMPage() {
-  const { hasModule } = useAuth()
-  const hasAccess = hasModule('llm')
-
-  const content = (
+  return (
     <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
       {/* Hero */}
       <div>
@@ -344,20 +329,14 @@ export default function PromptsLLMPage() {
         filterDefs={FILTERS}
         renderCardFront={CardFront}
         renderCardBack={CardBack}
-        renderModal={(item, close) => <ModalContent item={item} close={close} hasAccess={hasAccess} />}
+        renderModal={(item, close) => <ModalContent item={item} close={close} />}
         moduleColor={COLOR}
         moduleLabel="Prompts LLM"
         tableColumns={TABLE_COLUMNS}
         kanbanAxis={KANBAN_AXIS}
-        hasAccess={hasAccess}
+        hasAccess={true}
         searchFields={['name', 'desc_short', 'tags', 'category', 'use_cases', 'top_models']}
       />
     </div>
   )
-
-  if (!hasAccess) {
-    return <LockOverlay module="llm" label="Débloquer les Prompts LLM">{content}</LockOverlay>
-  }
-
-  return content
 }

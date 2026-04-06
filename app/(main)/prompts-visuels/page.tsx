@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
 import DatabaseShell from '@/components/catalog/DatabaseShell'
-import LockOverlay from '@/components/shared/LockOverlay'
 import LikeSaveButtons from '@/components/shared/LikeSaveButtons'
 import ScoreBadge from '@/components/shared/ScoreBadge'
 import Badge from '@/components/shared/Badge'
@@ -144,7 +142,7 @@ function CardBack(item: CatalogItem) {
   )
 }
 
-function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: () => void; hasAccess: boolean }) {
+function ModalContent({ item, close }: { item: CatalogItem; close: () => void }) {
   const raw = item as unknown as Record<string, unknown>
   const name = String(raw['name'] || '')
   const descShort = String(raw['desc_short'] || '')
@@ -165,7 +163,7 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
   const fullPrompt = promptParams ? `${promptText} ${promptParams}` : promptText
 
   const copyPrompt = () => {
-    if (hasAccess && fullPrompt) {
+    if (fullPrompt) {
       navigator.clipboard.writeText(fullPrompt)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -217,21 +215,15 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
         <div className="flex items-center justify-between px-4 py-2.5"
           style={{ background: `${COLOR}08`, borderBottom: `1px solid ${COLOR}15` }}>
           <span className="text-xs font-bold" style={{ color: COLOR }}>Prompt complet</span>
-          {!hasAccess && (
-            <span className="text-[9px] px-2 py-0.5 rounded font-bold"
-              style={{ background: 'rgba(0,212,255,0.1)', color: '#00d4ff', border: '1px solid rgba(0,212,255,0.2)' }}>
-              🔒 Full Access requis
-            </span>
-          )}
         </div>
         <div className="p-4" style={{ background: 'rgba(0,0,0,0.2)' }}>
           <pre className="text-[11px] leading-relaxed whitespace-pre-wrap font-mono"
-            style={{ color: hasAccess ? 'var(--c-text-1)' : 'var(--c-text-4)', filter: hasAccess ? 'none' : 'blur(5px)', userSelect: hasAccess ? 'auto' : 'none', maxHeight: 180, overflow: 'auto' }}>
+            style={{ color: 'var(--c-text-1)', maxHeight: 180, overflow: 'auto' }}>
             {promptText}
           </pre>
           {promptParams && (
             <div className="mt-2 text-[10px] font-mono px-2 py-1 rounded"
-              style={{ background: 'rgba(255,255,255,0.05)', color: hasAccess ? COLOR : 'var(--c-text-4)', filter: hasAccess ? 'none' : 'blur(4px)' }}>
+              style={{ background: 'rgba(255,255,255,0.05)', color: COLOR }}>
               {promptParams}
             </div>
           )}
@@ -254,8 +246,8 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
       <div className="flex gap-2">
         <button onClick={copyPrompt}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
-          style={{ background: hasAccess ? `linear-gradient(135deg, ${COLOR}, ${COLOR}aa)` : 'rgba(255,255,255,0.05)', color: hasAccess ? '#030712' : 'var(--c-text-3)' }}>
-          {copied ? '✓ Copié !' : (hasAccess ? '📋 Copier le prompt complet' : '🔒 Copier le prompt')}
+          style={{ background: `linear-gradient(135deg, ${COLOR}, ${COLOR}aa)`, color: '#030712' }}>
+          {copied ? '✓ Copié !' : '📋 Copier le prompt complet'}
         </button>
         <LikeSaveButtons item={{ id: item.id, type: 'visual' }} />
       </div>
@@ -264,15 +256,13 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
 }
 
 export default function PromptsVisuelsPage() {
-  const { hasModule } = useAuth()
-  const hasAccess = hasModule('visual')
   const [typeFilter, setTypeFilter] = useState('')
 
   const filteredItems = typeFilter
     ? (VISUAL_PROMPTS as unknown as Record<string, unknown>[]).filter(p => p['generation_type'] === typeFilter) as unknown as CatalogItem[]
     : VISUAL_PROMPTS as unknown as CatalogItem[]
 
-  const content = (
+  return (
     <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
       <div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
@@ -313,20 +303,14 @@ export default function PromptsVisuelsPage() {
         filterDefs={FILTERS}
         renderCardFront={CardFront}
         renderCardBack={CardBack}
-        renderModal={(item, close) => <ModalContent item={item} close={close} hasAccess={hasAccess} />}
+        renderModal={(item, close) => <ModalContent item={item} close={close} />}
         moduleColor={COLOR}
         moduleLabel="Prompts Visuels"
         tableColumns={TABLE_COLUMNS}
         kanbanAxis={KANBAN_AXIS}
-        hasAccess={hasAccess}
+        hasAccess={true}
         searchFields={['name', 'desc_short', 'tags', 'style', 'destination', 'mood', 'subject']}
       />
     </div>
   )
-
-  if (!hasAccess) {
-    return <LockOverlay module="visual" label="Débloquer les Prompts Visuels">{content}</LockOverlay>
-  }
-
-  return content
 }

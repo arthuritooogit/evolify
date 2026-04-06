@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from '@/context/AuthContext'
 import DatabaseShell from '@/components/catalog/DatabaseShell'
-import LockOverlay from '@/components/shared/LockOverlay'
 import ScoreBadge from '@/components/shared/ScoreBadge'
 import Badge from '@/components/shared/Badge'
 import LikeSaveButtons from '@/components/shared/LikeSaveButtons'
@@ -170,7 +168,7 @@ function CardBack(item: CatalogItem) {
   )
 }
 
-function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: () => void; hasAccess: boolean }) {
+function ModalContent({ item, close }: { item: CatalogItem; close: () => void }) {
   const raw = item as unknown as Record<string, unknown>
   const name = String(raw['name'] || '')
   const descLong = String(raw['desc_long'] || raw['desc_short'] || '')
@@ -190,7 +188,7 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
   const [copied, setCopied] = useState(false)
 
   const handleCopy = () => {
-    if (hasAccess && workflowJson) {
+    if (workflowJson) {
       navigator.clipboard.writeText(workflowJson)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
@@ -198,7 +196,7 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
   }
 
   const handleDownload = () => {
-    if (hasAccess && workflowJson) {
+    if (workflowJson) {
       const blob = new Blob([workflowJson], { type: 'application/json' })
       const url = URL.createObjectURL(blob)
       const a = document.createElement('a')
@@ -280,13 +278,13 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
       <div className="flex gap-2 flex-wrap">
         <button onClick={handleCopy}
           className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105 min-w-[100px]"
-          style={{ background: hasAccess ? `linear-gradient(135deg, ${COLOR}, ${COLOR}aa)` : 'rgba(255,255,255,0.05)', color: hasAccess ? '#030712' : 'var(--c-text-3)' }}>
-          {copied ? '✓ Copié !' : (hasAccess ? '📋 Copier JSON' : '🔒 Copier JSON')}
+          style={{ background: `linear-gradient(135deg, ${COLOR}, ${COLOR}aa)`, color: '#030712' }}>
+          {copied ? '✓ Copié !' : '📋 Copier JSON'}
         </button>
         <button onClick={handleDownload}
           className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-bold transition-all hover:scale-105"
-          style={{ background: hasAccess ? 'rgba(74,222,128,0.15)' : 'rgba(255,255,255,0.04)', color: hasAccess ? COLOR : 'var(--c-text-3)', border: `1px solid ${hasAccess ? COLOR + '30' : 'rgba(255,255,255,0.08)'}` }}>
-          ⬇ {hasAccess ? 'Télécharger .json' : '🔒 Télécharger'}
+          style={{ background: 'rgba(74,222,128,0.15)', color: COLOR, border: `1px solid ${COLOR}30` }}>
+          ⬇ Télécharger .json
         </button>
         <LikeSaveButtons item={{ id: item.id, type: 'workflow' }} />
       </div>
@@ -295,15 +293,13 @@ function ModalContent({ item, close, hasAccess }: { item: CatalogItem; close: ()
 }
 
 export default function AutomatisationsPage() {
-  const { hasModule } = useAuth()
-  const hasAccess = hasModule('automation')
   const [platformFilter, setPlatformFilter] = useState('')
 
   const filteredItems = platformFilter
     ? (WORKFLOWS as unknown as Record<string, unknown>[]).filter(w => w['platform'] === platformFilter) as unknown as CatalogItem[]
     : WORKFLOWS as unknown as CatalogItem[]
 
-  const content = (
+  return (
     <div className="max-w-7xl mx-auto px-4 py-10 space-y-8">
       <div>
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium mb-4"
@@ -344,20 +340,14 @@ export default function AutomatisationsPage() {
         filterDefs={FILTERS}
         renderCardFront={CardFront}
         renderCardBack={CardBack}
-        renderModal={(item, close) => <ModalContent item={item} close={close} hasAccess={hasAccess} />}
+        renderModal={(item, close) => <ModalContent item={item} close={close} />}
         moduleColor={COLOR}
         moduleLabel="Automatisations"
         tableColumns={TABLE_COLUMNS}
         kanbanAxis={KANBAN_AXIS}
-        hasAccess={hasAccess}
+        hasAccess={true}
         searchFields={['name', 'desc_short', 'tags', 'platform', 'apps', 'type']}
       />
     </div>
   )
-
-  if (!hasAccess) {
-    return <LockOverlay module="automation" label="Débloquer les Automatisations">{content}</LockOverlay>
-  }
-
-  return content
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Lock, ArrowRight } from 'lucide-react'
@@ -16,7 +16,7 @@ const DEV_ACCOUNTS = [
   { label: 'Automation',  user: 'workflow', color: '#4ade80', rgb: '74,222,128'  },
 ]
 
-export default function ConnexionPage() {
+function ConnexionInner() {
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
@@ -186,5 +186,13 @@ export default function ConnexionPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function ConnexionPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen" />}>
+      <ConnexionInner />
+    </Suspense>
   )
 }

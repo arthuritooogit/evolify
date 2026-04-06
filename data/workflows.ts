@@ -346,7 +346,6 @@ export const WORKFLOWS: Workflow[] = [
   {
     id: 'wf19', name: 'Agent Recherche & Synthèse Automatique', slug: 'agent-recherche-synthese',
     desc_short: 'Agent IA qui effectue des recherches approfondies et produit des rapports complets.',
-    desc_log: 'Agent multi-étapes qui utilise Tavily pour chercher des informations, Firecrawl pour lire les pages, Claude pour analyser et synthétiser, puis génère un rapport structuré sauvegardé dans Notion.',
     desc_long: 'Agent multi-étapes qui utilise Tavily pour chercher des informations, Firecrawl pour lire les pages, Claude pour analyser et synthétiser, puis génère un rapport structuré sauvegardé dans Notion.',
     platform: 'n8n', platforms_compatible: ['n8n'],
     type: 'agent', complexity: 'avancé', nodes_count: 25,
@@ -423,7 +422,6 @@ export const WORKFLOWS: Workflow[] = [
   {
     id: 'wf23', name: 'Bot Discord Communauté IA', slug: 'bot-discord-communaute-ia',
     desc_short: 'Bot Discord IA qui répond aux questions de votre communauté 24h/24.',
-    desc_log: 'Bot connecté à une base de connaissances RAG sur votre domaine. Répond aux questions en citant les sources, modère les messages off-topic, accueille les nouveaux membres et poste des actus automatiquement.',
     desc_long: 'Bot connecté à une base de connaissances RAG sur votre domaine. Répond aux questions en citant les sources, modère les messages off-topic, accueille les nouveaux membres et poste des actus automatiquement.',
     platform: 'n8n', platforms_compatible: ['n8n'],
     type: 'agent', complexity: 'avancé', nodes_count: 20,
@@ -481,7 +479,6 @@ export const WORKFLOWS: Workflow[] = [
   {
     id: 'wf26', name: 'Suivi & Alertes Budget Publicitaire', slug: 'suivi-alertes-budget-publicitaire',
     desc_short: 'Surveille vos dépenses Meta Ads et Google Ads et alerte en cas de dérive.',
-    desc_log: 'Récupère quotidiennement les métriques Meta Ads et Google Ads via API, compare aux objectifs définis, calcule le rythme de consommation du budget et envoie des alertes Slack si dérive >10%.',
     desc_long: 'Récupère quotidiennement les métriques Meta Ads et Google Ads via API, compare aux objectifs définis, calcule le rythme de consommation du budget et envoie des alertes Slack si dérive >10%.',
     platform: 'Make', platforms_compatible: ['Make', 'n8n', 'Zapier'],
     type: 'notification', complexity: 'intermédiaire', nodes_count: 12,
@@ -570,7 +567,7 @@ export const WORKFLOWS: Workflow[] = [
     use_cases: ['Agenda', 'Booking', 'Rendez-vous', 'Productivité'],
     tags: ['Booking', 'Agenda', 'Rendez-vous', 'Agent IA', 'Automatisation'],
     score_global: 9.0,
-    usecase_scores: { Agenda: 9.3, Booking: 9.4, Rendez-vous: 9.2 },
+    usecase_scores: { Agenda: 9.3, Booking: 9.4, 'Rendez-vous': 9.2 },
     featured: false, verified: true,
     created_at: '2024-08-01', updated_at: '2025-02-01',
   },
@@ -653,7 +650,6 @@ export const WORKFLOWS: Workflow[] = [
   {
     id: 'wf35', name: 'Automatisation Posts LinkedIn Personnels', slug: 'automatisation-posts-linkedin',
     desc_short: 'Génère et programme vos posts LinkedIn à partir de vos notes et idées.',
-    desc_log: 'Prend vos notes brutes ou bullet points depuis Notion ou Telegram, génère un post LinkedIn engageant avec votre ton de voix via Claude, l\'envoie pour validation et programme la publication via Buffer ou Taplio.',
     desc_long: 'Prend vos notes brutes ou bullet points depuis Notion ou Telegram, génère un post LinkedIn engageant avec votre ton de voix via Claude, l\'envoie pour validation et programme la publication via Buffer ou Taplio.',
     platform: 'n8n', platforms_compatible: ['n8n', 'Make', 'Zapier'],
     type: 'automatisation', complexity: 'débutant', nodes_count: 8,

@@ -1,4 +1,5 @@
 import HeroSection from '@/components/landing/HeroSection'
+import LogosBanner from '@/components/landing/LogosBanner'
 import ProblemSection from '@/components/landing/ProblemSection'
 import ModulesSection from '@/components/landing/ModulesSection'
 import TestimonialsSection from '@/components/landing/TestimonialsSection'
@@ -13,6 +14,7 @@ export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <LogosBanner />
       <ProblemSection />
       <ModulesSection />
       <TestimonialsSection />

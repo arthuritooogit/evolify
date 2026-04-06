@@ -10,7 +10,7 @@ export type ModuleKey = 'llm' | 'visual' | 'automation' | 'skills'
 export type ContentType =
   | 'vidéo' | 'article' | 'documentation' | 'formation' | 'tuto'
   | 'blog-evolify' | 'news' | 'comparatif' | 'classement' | 'use-case'
-  | 'podcast' | 'newsletter' | 'forum'
+  | 'podcast' | 'newsletter' | 'forum' | 'research'
 
 // ─── OUTILS IA ────────────────────────────────────────────────────────────────
 

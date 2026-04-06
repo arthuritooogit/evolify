@@ -6,7 +6,7 @@ import DatabaseShell from '@/components/catalog/DatabaseShell'
 import ScoreBadge from '@/components/shared/ScoreBadge'
 import Badge from '@/components/shared/Badge'
 import LikeSaveButtons from '@/components/shared/LikeSaveButtons'
-import { AI_TOOLS } from '@/data/tools'
+import { TOOLS as AI_TOOLS } from '@/data/tools'
 import type { FilterDef, KanbanAxis, CatalogItem } from '@/types'
 
 const COLOR = '#a855f7'
@@ -267,9 +267,9 @@ export default function OutilsIAPage() {
         </p>
         <div className="flex gap-4 text-sm flex-wrap">
           {[
-            { label: 'Gratuits', count: AI_TOOLS.filter(t => t.price === 'gratuit').length, color: '#4ade80' },
-            { label: 'Freemium', count: AI_TOOLS.filter(t => t.price === 'freemium').length, color: '#60a5fa' },
-            { label: 'Open-source', count: AI_TOOLS.filter(t => t.price === 'open-source').length, color: '#a855f7' },
+            { label: 'Gratuits',    count: AI_TOOLS.filter((t: {price:string}) => t.price === 'gratuit').length,     color: '#4ade80' },
+            { label: 'Freemium',    count: AI_TOOLS.filter((t: {price:string}) => t.price === 'freemium').length,    color: '#60a5fa' },
+            { label: 'Open-source', count: AI_TOOLS.filter((t: {price:string}) => t.price === 'open-source').length, color: '#a855f7' },
           ].map(({ label, count, color }) => (
             <span key={label} className="text-xs" style={{ color: 'var(--c-text-3)' }}>
               <span style={{ color }} className="font-bold">{count}</span> {label}

@@ -43,7 +43,7 @@ const MODULES = [
   },
   {
     emoji: '📚', label: 'Ressources', color: '#00ff87', href: '/ressources', free: true,
-    count: '200+', desc: 'Guides, tutoriels YouTube, newsletters et formations pour maîtriser l'IA pas à pas.',
+    count: '200+', desc: "Guides, tutoriels YouTube, newsletters et formations pour maîtriser l'IA pas à pas.",
     features: ['Tutoriels vidéo', 'Newsletters & guides', 'Classés par niveau'],
   },
 ]

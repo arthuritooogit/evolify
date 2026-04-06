@@ -146,9 +146,9 @@ function CardBack(item: CatalogItem) {
           </div>
         )}
       </div>
-      {nodesCount && (
-        <div className="text-[9px]" style={{ color: 'var(--c-text-3)' }}>{nodesCount} nœuds</div>
-      )}
+      {nodesCount ? (
+        <div className="text-[9px]" style={{ color: 'var(--c-text-3)' }}>{String(nodesCount)} nœuds</div>
+      ) : null}
       <div className="flex gap-2">
         {hasJson && (
           <>
